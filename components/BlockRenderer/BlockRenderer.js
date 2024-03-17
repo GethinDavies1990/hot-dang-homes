@@ -5,7 +5,14 @@ export const BlockRenderer = ({ blocks }) => {
   return blocks.map((block) => {
     switch (block.name) {
       case "core/heading": {
-        return <Heading key={block.id} />;
+        return (
+          <Heading
+            key={block.id}
+            textAlign={block.attributes.textAlign}
+            level={block.attributes.level}
+            content={block.attributes.content}
+          />
+        );
       }
       case "core/cover": {
         return (
