@@ -6,6 +6,12 @@ export default function Page(props) {
   return <div>page</div>;
 }
 
+export const getStaticProps = async () => {
+  return {
+    props: {},
+  };
+};
+
 export const getStaticPaths = async () => {
   const { data } = await client.query({
     query: gql`
@@ -21,12 +27,12 @@ export const getStaticPaths = async () => {
 
   return {
     paths: data.pages.nodes
-      .filer((page) => page.uri !== "/")
-      .map((page) => {
+      .filter((page) => page.uri !== "/")
+      .map((page) => ({
         params: {
-          slug: page.uri.substring(1, page.uri.length - 1).split("/");
-        }
-      }),
+          slug: page.uri.substring(1, page.uri - 1).split("/"),
+        },
+      })),
     fallback: "blocking",
   };
 };
