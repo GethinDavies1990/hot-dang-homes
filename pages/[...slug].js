@@ -9,21 +9,29 @@ export default function Page(props) {
 
 export const getStaticProps = async (context) => {
   console.log("CONTEXT: ", context);
+  const uri = `/${context.params.slug.join("/")}/`;
+  console.log("URI: ", uri);
   const { data } = await client.query({
     query: gql`
-      query NewQuery {
-        nodeByUri(uri: "/") {
+      query PageQuery($uri: String!) {
+        nodeByUri(uri: $uri) {
           ... on Page {
             id
-            blocks
+            title
+            blocks(postTemplate: false)
           }
         }
       }
     `,
+    variables: {
+      uri,
+    },
   });
+  const blocks = cleanAndTransformBlocks(data.nodeByUri.blocks);
   return {
     props: {
-      blocks: cleanAndTransformBlocks(data.nodeByUri.blocks),
+      title: data.nodeByUri.title,
+      blocks,
     },
   };
 };
